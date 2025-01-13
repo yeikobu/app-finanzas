@@ -1,8 +1,8 @@
 //
 //  ContentView.swift
-//  app-finanzas
+//  Metas Financieras
 //
-//  Created by Jacob on 13-01-25.
+//  Created by Jacob on 12-01-25.
 //
 
 import SwiftUI

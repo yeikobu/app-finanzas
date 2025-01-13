@@ -11,7 +11,7 @@ import SwiftUI
 struct app_finanzasApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            FinanceGoalsView()
         }
     }
 }
