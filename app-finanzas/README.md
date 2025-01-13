@@ -71,7 +71,7 @@ Si no tienes Xcode 16 o superior, asegúrate de actualizar tu entorno antes de i
 1. Haz un fork de este repositorio.
 2. Crea una rama para tu feature o corrección de bug (git checkout -b feature/nueva-funcionalidad).
 3. Haz commits con cambios bien documentados.
-4. Envía un Pull Request de tu rama a la rama development de este repositorio.
+4. Envía un Pull Request de tu rama al repositorio principal.
 5. Un revisor del proyecto revisará tus cambios y te dará retroalimentación.
 
 ## Licencia
