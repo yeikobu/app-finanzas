@@ -9,6 +9,9 @@ import SwiftUI
 
 struct FinanceGoalsView: View {
     
+    //Environmets
+    @State private var financeGoalsViewModel: FinanceGoalsViewModel = .init()
+    
     // SearchBar text state
     @State private var goalTextToSearch: String = ""
     
@@ -27,18 +30,33 @@ struct FinanceGoalsView: View {
     
     var body: some View {
         NavigationStack {
-            Picker("", selection: $selectedOption) {
-                ForEach(SegmentedControlOption.allCases) { option in
-                    Text(option.rawValue.capitalized)
+            VStack {
+                if !financeGoalsViewModel.financeGoals.isEmpty {
+                    Picker("", selection: $selectedOption) {
+                        ForEach(SegmentedControlOption.allCases) { option in
+                            Text(option.rawValue.capitalized)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .padding(.horizontal, 10)
+                    
+                    List {
+                        ForEach(financeGoalsViewModel.financeGoals) { goal in
+                            GoalRowView(financeGoal: goal)
+                        }
+                    }
+                    .navigationDestination(for: FinanceGoalModel.self) { goal in
+                        FinanceGoalDetailView(financeGoal: goal)
+                    }
+                    .searchable(text: $goalTextToSearch, prompt: "Buscar meta")
+                } else {
+                    VStack {
+                        Label("No has registrado ninguna meta aún", systemImage: "exclamationmark.triangle.fill")
+                            .font(.subheadline)
+                            .symbolEffect(.wiggle.forward.byLayer, options: .repeat(.periodic(delay: 0.0)))
+                    }
                 }
             }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding(.horizontal, 10)
-            
-            List {
-                
-            }
-            .searchable(text: $goalTextToSearch, prompt: "Buscar meta")
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
                     CustomPrimaryButtonView(text: "Nueva meta") {
@@ -54,6 +72,7 @@ struct FinanceGoalsView: View {
             .sheet(isPresented: $showNewGoalSheet) {
                 NewGoalView()
                     .presentationDetents([.medium])
+                    .environment(financeGoalsViewModel)
             }
         }
     }
