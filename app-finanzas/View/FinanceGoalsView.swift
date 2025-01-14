@@ -28,6 +28,12 @@ struct FinanceGoalsView: View {
     // Show new goal sheet state
     @State private var showNewGoalSheet: Bool = false
     
+    // DeleteAlert states
+    @State private var showDeleteGoalAlert: Bool = false
+    @State private var goalToDelete: FinanceGoalModel = .init(name: "", totalToSave: 0)
+    @State private var wasGoalDeletedSuccess: Bool = false
+    
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -43,6 +49,12 @@ struct FinanceGoalsView: View {
                     List {
                         ForEach(financeGoalsViewModel.financeGoals) { goal in
                             GoalRowView(financeGoal: goal)
+                        }
+                        .onDelete { goalToDelete in
+                            if let index = goalToDelete.first {
+                                self.goalToDelete = financeGoalsViewModel.financeGoals[index]
+                            }
+                            showDeleteGoalAlert.toggle()
                         }
                     }
                     .navigationDestination(for: FinanceGoalModel.self) { goal in
@@ -73,6 +85,40 @@ struct FinanceGoalsView: View {
                 NewGoalView()
                     .presentationDetents([.medium])
                     .environment(financeGoalsViewModel)
+            }
+            .alert("¿Deseas eliminar \(goalToDelete.name.capitalized) de tus metas?", isPresented: $showDeleteGoalAlert) {
+                Button(role: .destructive) {
+                    withAnimation(.bouncy(duration: 0.4)) {
+                        wasGoalDeletedSuccess = financeGoalsViewModel.deleteGoal(goal: goalToDelete)
+                    }
+                    
+                    withAnimation(.easeInOut(duration: 0.3).delay(1)) {
+                        wasGoalDeletedSuccess = false
+                    }
+                    
+                } label: {
+                    Label("Eliminar", systemImage: "trash.fill")
+                        .symbolEffect(.appear)
+                }
+
+            }
+            .overlay {
+                VStack {
+                    HStack {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                        
+                        Text("Meta eliminada")
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 30)
+                            .fill(.ultraThinMaterial)
+                    )
+                    .shadow(radius: 5)
+                }
+                .offset(y: wasGoalDeletedSuccess ? 250 : 1200)
             }
         }
     }

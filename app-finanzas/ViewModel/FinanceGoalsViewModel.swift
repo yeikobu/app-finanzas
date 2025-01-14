@@ -19,4 +19,9 @@ class FinanceGoalsViewModel {
         financeGoals.append(financeGoal)
         print(financeGoals)
     }
+    
+    func deleteGoal(goal: FinanceGoalModel) -> Bool {
+        financeGoals.removeAll(where: { $0.id == goal.id })
+        return true
+    }
 }
