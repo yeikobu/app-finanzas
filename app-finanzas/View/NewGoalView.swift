@@ -97,7 +97,7 @@ struct NewGoalView: View {
                     
                     VStack {
                         Toggle("Agregar fecha límite", isOn: $isDeadlineNeeded)
-                            .tint(.primary)
+                            .tint(colorScheme == .dark ? .black.opacity(0.8) : .accentColor)
                         
                         if isDeadlineNeeded {
                             DatePicker("Fecha límite", selection: $deadline)
