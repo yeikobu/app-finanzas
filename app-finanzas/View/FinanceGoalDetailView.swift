@@ -42,12 +42,15 @@ struct FinanceGoalDetailView: View {
                 Text("Información de la mete")
             }
             
-            List {
-                ForEach(financeGoal.contributions, id: \.id) { contribution in
-                    HStack {
-                        Text("\(contribution.amount, specifier: "%.2f")")
-                        
-                        Text(formatDate(date: contribution.date))
+            // If the goal has contributions, shows them
+            if !financeGoal.contributions.isEmpty {
+                List {
+                    ForEach(financeGoal.contributions, id: \.id) { contribution in
+                        HStack {
+                            Text("\(contribution.amount, specifier: "%.2f")")
+                            
+                            Text(formatDate(date: contribution.date))
+                        }
                     }
                 }
             }
