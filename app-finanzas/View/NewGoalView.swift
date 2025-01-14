@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct NewGoalView: View {
+    //EnvironmentObject
+    @Environment(FinanceGoalsViewModel.self) private var financeGoalsViewModel
     
     @State private var newGoalViewModel: NewGoalViewModel = .init()
     
@@ -95,7 +97,7 @@ struct NewGoalView: View {
                     
                     VStack {
                         Toggle("Agregar fecha límite", isOn: $isDeadlineNeeded)
-                            .tint(.primary)
+                            .tint(colorScheme == .dark ? .black.opacity(0.8) : .accentColor)
                         
                         if isDeadlineNeeded {
                             DatePicker("Fecha límite", selection: $deadline)
@@ -108,6 +110,10 @@ struct NewGoalView: View {
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
                     CustomPrimaryButtonView(text: "Guardar meta") {
+                        let newGoal = FinanceGoalModel(name: goalName, totalToSave: Double(totalToSave) ?? 0, alreadySaved: Double(alreadySaved) ?? 0, deadline: deadline)
+                        
+                        financeGoalsViewModel.addFinanceGoal(financeGoal: newGoal)
+                        
                         dismiss()
                     }
                     .disabled(!areFieldsCompleted)
@@ -119,5 +125,7 @@ struct NewGoalView: View {
 }
 
 #Preview {
+    @Previewable @State var financeGoalsViewModel = FinanceGoalsViewModel()
     NewGoalView()
+        .environment(financeGoalsViewModel)
 }
