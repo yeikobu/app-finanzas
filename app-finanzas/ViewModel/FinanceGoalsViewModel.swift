@@ -24,4 +24,15 @@ class FinanceGoalsViewModel {
         financeGoals.removeAll(where: { $0.id == goal.id })
         return true
     }
+    
+    func getTotalSaved(contributions: [ContributionModel]) -> Double {
+        return contributions.reduce(0.0) { $0 + $1.amount }
+    }
+    
+    func addContribution(contribution: ContributionModel) {
+        for index in financeGoals.indices {
+            financeGoals[index].contributions.append(contribution)
+            financeGoals[index].alreadySaved = getTotalSaved(contributions: financeGoals[index].contributions)
+        }
+    }
 }

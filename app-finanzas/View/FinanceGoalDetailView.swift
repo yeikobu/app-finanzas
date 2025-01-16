@@ -9,34 +9,51 @@ import SwiftUI
 
 struct FinanceGoalDetailView: View {
     
+    @Environment(FinanceGoalsViewModel.self) private var financeGoalsViewModel
+    
     @State var financeGoal: FinanceGoalModel
+    @State private var showNewContributionSheet: Bool = false
+    @State private var showContributionAddedMessage: Bool = false
+    @State private var showPill: Bool = false
     
     var body: some View {
         List {
             Section {
                 HStack(spacing: 40) {
                     Text("Nombre meta")
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
                     
                     Text(financeGoal.name)
                 }
                 
                 HStack(spacing: 40) {
                     Text("Total a ahorrar")
+                        .foregroundStyle(.secondary)
                     
+                    Spacer()
                     
                     Text("\(financeGoal.totalToSave, specifier: "%.2f")")
                 }
                 
                 HStack(spacing: 40) {
                     Text("Total ahorrado")
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
                     
                     Text("\(financeGoal.alreadySaved ?? 0, specifier: "%.2f")")
                 }
                 
                 HStack(spacing: 40) {
-                    Text("Fecha de creación")
+                    Text("Fecha creación")
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
                     
                     Text(formatDate(date: financeGoal.createdAt))
+                        .multilineTextAlignment(.trailing)
                 }
             } header: {
                 Text("Información de la mete")
@@ -44,14 +61,18 @@ struct FinanceGoalDetailView: View {
             
             // If the goal has contributions, shows them
             if !financeGoal.contributions.isEmpty {
-                List {
-                    ForEach(financeGoal.contributions, id: \.id) { contribution in
+                Section {
+                    ForEach(financeGoal.contributions.sorted(by: { $0.date > $1.date }), id: \.id) { contribution in
                         HStack {
                             Text("\(contribution.amount, specifier: "%.2f")")
+                            
+                            Spacer()
                             
                             Text(formatDate(date: contribution.date))
                         }
                     }
+                } header: {
+                    Text("Tus aportes")
                 }
             }
         }
@@ -59,9 +80,14 @@ struct FinanceGoalDetailView: View {
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
                 CustomPrimaryButtonView(text: "Agregar Monto") {
-                    
+                    showNewContributionSheet.toggle()
                 }
             }
+        }
+        .sheet(isPresented: $showNewContributionSheet) {
+            NewContributionView(financeGoal: $financeGoal)
+                .presentationDetents([.medium])
+                .environment(financeGoalsViewModel)
         }
     }
     
@@ -74,5 +100,8 @@ struct FinanceGoalDetailView: View {
 }
 
 #Preview {
-    FinanceGoalDetailView(financeGoal: .init(name: "Macbook Pro", totalToSave: 300, alreadySaved: 2000))
+    @Previewable @State var financeGoalsViewModel = FinanceGoalsViewModel()
+    
+    FinanceGoalDetailView(financeGoal: .init(name: "Macbook Pro", totalToSave: 3700, alreadySaved: 200))
+        .environment(financeGoalsViewModel)
 }
