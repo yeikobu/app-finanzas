@@ -9,6 +9,8 @@ import SwiftUI
 
 struct FinanceGoalDetailView: View {
     
+    @Environment(FinanceGoalsViewModel.self) private var financeGoalsViewModel
+    
     @State var financeGoal: FinanceGoalModel
     @State private var showNewContributionSheet: Bool = false
     @State private var showContributionAddedMessage: Bool = false
@@ -85,6 +87,7 @@ struct FinanceGoalDetailView: View {
         .sheet(isPresented: $showNewContributionSheet) {
             NewContributionView(financeGoal: $financeGoal)
                 .presentationDetents([.medium])
+                .environment(financeGoalsViewModel)
         }
     }
     
@@ -97,5 +100,8 @@ struct FinanceGoalDetailView: View {
 }
 
 #Preview {
-    FinanceGoalDetailView(financeGoal: .init(name: "Macbook Pro", totalToSave: 300, alreadySaved: 2000))
+    @Previewable @State var financeGoalsViewModel = FinanceGoalsViewModel()
+    
+    FinanceGoalDetailView(financeGoal: .init(name: "Macbook Pro", totalToSave: 3700, alreadySaved: 200))
+        .environment(financeGoalsViewModel)
 }

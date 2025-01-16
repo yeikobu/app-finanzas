@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NewContributionView: View {
     
+    @Environment(FinanceGoalsViewModel.self) private var financeGoalsViewModel
     @Environment(\.dismiss) private var dismiss
     
     @Binding var financeGoal: FinanceGoalModel
@@ -66,6 +67,12 @@ struct NewContributionView: View {
                             if amountToAdd > 0 {
                                 let goalToAdd = ContributionModel(date: contributionDate, amount: amountToAdd)
                                 financeGoal.contributions.append(goalToAdd)
+                                
+                                financeGoal.alreadySaved = financeGoalsViewModel.getTotalSaved(contributions: financeGoal.contributions)
+                                
+                                // A través del environment, actualiza el aporte hasta el padre
+                                financeGoalsViewModel.addContribution(contribution: goalToAdd)
+                                
                                 dismiss()
                             } else {
                                 showErrorMessaje.toggle()
@@ -83,5 +90,8 @@ struct NewContributionView: View {
 }
 
 #Preview {
+    @Previewable @State var financeGoalsViewModel = FinanceGoalsViewModel()
+    
     NewContributionView(financeGoal: .constant(FinanceGoalModel(name: "Macbook pro", totalToSave: 2000, alreadySaved: 300)))
+        .environment(financeGoalsViewModel)
 }
