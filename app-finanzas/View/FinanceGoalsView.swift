@@ -11,6 +11,7 @@ struct FinanceGoalsView: View {
     
     //Environmets
     @State private var financeGoalsViewModel: FinanceGoalsViewModel = .init()
+//    @Environment(FinanceGoalsViewModel.self) private var financeGoalsViewModel
     
     // SearchBar text state
     @State private var goalTextToSearch: String = ""
@@ -59,6 +60,7 @@ struct FinanceGoalsView: View {
                     }
                     .navigationDestination(for: FinanceGoalModel.self) { goal in
                         FinanceGoalDetailView(financeGoal: goal)
+                            .environment(financeGoalsViewModel)
                     }
                     .searchable(text: $goalTextToSearch, prompt: "Buscar meta")
                 } else {
